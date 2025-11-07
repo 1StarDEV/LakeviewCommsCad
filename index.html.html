@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lakeview Comms CAD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #A2161C;
+            --primary-dark: #A2171E;
+            --secondary: #010101;
+            --accent: #1A1A1A;
+            --card-bg: #121212;
+            --light: #F5F5F5;
+            --gray: #8A8A8A;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--secondary);
+            color: var(--light);
+            overflow: hidden;
+            height: 100vh;
+            font-size: 14px;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .login-logo {
+            width: 140px;
+            margin-bottom: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .login-subtitle {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .login-warning {
+            background: rgba(162, 22, 28, 0.1);
+            border-left: 3px solid var(--primary);
+            padding: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--light);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(162, 22, 28, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(162, 22, 28, 0.4);
+        }
+
+        /* Confirmation Modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirmation-content {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+        }
+
+        .confirmation-icon {
+            font-size: 2.5rem;
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+
+        .confirmation-title {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .confirmation-message {
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .confirmation-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .confirmation-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(162, 22, 28, 0.4);
+        }
+
+        /* CAD App */
+        .app-container {
+            display: none;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* Header */
+        header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 28px;
+            width: auto;
+        }
+
+        .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .user-id {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .shift-time {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .sign-out-btn {
+            padding: 6px 12px;
+            background: rgba(162, 22, 28, 0.15);
+            color: var(--light);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .sign-out-btn:hover {
+            background: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Priority Alert */
+        .priority-alert {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            z-index: 1000;
+            display: none;
+            animation: alertSlide 0.5s ease-out, alertFlash 1s infinite;
+        }
+
+        @keyframes alertSlide {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes alertFlash {
+            0%, 100% { box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 4px 20px rgba(239, 68, 68, 0.8); }
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 15px;
+            padding: 15px;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 18px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title i {
+            color: var(--primary);
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(162, 22, 28, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .btn-secondary {
+            background: var(--accent);
+            border: 1px solid var(--border);
+        }
+
+        /* Priority Button */
+        .priority-btn {
+            animation: spectrum 3s infinite;
+        }
+
+        @keyframes spectrum {
+            0% { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+            25% { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+            50% { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+            75% { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
+            100% { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+        }
+
+        /* Call List */
+        .call-item {
+            background: var(--accent);
+            border-left: 3px solid var(--warning);
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .call-item:hover {
+            background: #252525;
+            transform: translateX(3px);
+        }
+
+        .call-item.active {
+            border-left-color: var(--primary);
+            background: rgba(162, 22, 28, 0.1);
+        }
+
+        .call-item.priority-high {
+            border-left-color: var(--danger);
+        }
+
+        .call-item.priority-medium {
+            border-left-color: var(--warning);
+        }
+
+        .call-item.priority-low {
+            border-left-color: var(--success);
+        }
+
+        .call-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .call-id {
+            font-weight: 600;
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+
+        .call-priority {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: var(--warning);
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .priority-high .call-priority {
+            background: var(--danger);
+        }
+
+        .priority-low .call-priority {
+            background: var(--success);
+        }
+
+        .call-location {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .call-type {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Unit List */
+        .department-section {
+            margin-bottom: 20px;
+        }
+
+        .department-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .department-logo {
+            height: 22px;
+            width: auto;
+        }
+
+        .department-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .rank-section {
+            margin-bottom: 16px;
+        }
+
+        .rank-title {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+            padding-left: 6px;
+            border-left: 2px solid var(--primary);
+        }
+
+        .unit-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--accent);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            cursor: grab;
+        }
+
+        .unit-item:hover {
+            background: #252525;
+            transform: translateY(-1px);
+        }
+
+        .unit-item:active {
+            cursor: grabbing;
+        }
+
+        .unit-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 12px;
+            box-shadow: 0 0 6px currentColor;
+        }
+
+        .unit-status.available {
+            background: var(--success);
+            color: var(--success);
+        }
+
+        .unit-status.busy {
+            background: var(--warning);
+            color: var(--warning);
+        }
+
+        .unit-status.out-of-service {
+            background: var(--danger);
+            color: var(--danger);
+        }
+
+        .unit-info {
+            flex: 1;
+        }
+
+        .unit-id {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .unit-officer {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 3px;
+        }
+
+        .unit-location {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-bottom: 3px;
+        }
+
+        .unit-status-time {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .unit-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .unit-action-btn {
+            padding: 4px 8px;
+            background: var(--card-bg);
+            color: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .unit-action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Active Incident Panel */
+        .active-incident {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .incident-header {
+            background: var(--accent);
+            padding: 18px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .incident-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .incident-id {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .incident-priority {
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: var(--warning);
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .priority-high .incident-priority {
+            background: var(--danger);
+        }
+
+        .priority-low .incident-priority {
+            background: var(--success);
+        }
+
+        .incident-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .narrative-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .narrative-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .narrative-log {
+            flex: 1;
+            background: var(--accent);
+            border-radius: 6px;
+            padding: 14px;
+            overflow-y: auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.85rem;
+            max-height: 150px;
+            border: 1px solid var(--border);
+        }
+
+        .narrative-entry {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .narrative-entry:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .narrative-time {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-bottom: 3px;
+        }
+
+        .narrative-input {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .narrative-input input {
+            flex: 1;
+            padding: 8px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 6px 0 0 6px;
+            color: white;
+            transition: border-color 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .narrative-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .narrative-input button {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 0 6px 6px 0;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .narrative-input button:hover {
+            background: var(--primary-dark);
+        }
+
+        .assigned-units {
+            margin-top: 15px;
+        }
+
+        .units-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .unit-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px;
+            padding: 12px;
+            background: var(--accent);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .unit-tag {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .unit-tag-remove {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .unit-tag-remove:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Priority Options */
+        .priority-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .priority-option {
+            padding: 10px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .priority-option:hover {
+            background: rgba(162, 22, 28, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--gray);
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 8px;
+            width: 450px;
+            max-width: 90%;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--light);
+        }
+
+        .form-textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        /* Status Options */
+        .status-options {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .status-option {
+            flex: 1;
+            padding: 10px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .status-option.active {
+            background: rgba(162, 22, 28, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* Department Selection */
+        .department-selection {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .department-option {
+            flex: 1;
+            padding: 12px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .department-option.active {
+            background: rgba(162, 22, 28, 0.2);
+            border-color: var(--primary);
+        }
+
+        .department-option-logo {
+            height: 22px;
+            width: auto;
+        }
+
+        /* Utility Classes */
+        .text-sm {
+            font-size: 0.8rem;
+        }
+
+        .text-xs {
+            font-size: 0.7rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+
+        .mt-12 {
+            margin-top: 12px;
+        }
+
+        .mt-15 {
+            margin-top: 15px;
+        }
+
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+
+        .mb-12 {
+            margin-bottom: 12px;
+        }
+
+        .mb-15 {
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Drag and Drop */
+        .drag-over {
+            background: rgba(162, 22, 28, 0.1) !important;
+            border: 2px dashed var(--primary) !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="login-screen">
+        <img src="https://ik.imagekit.io/seqcqjmzq/e595f6f1-e9e2-44a1-8b97-0c5afc307593.png?updatedAt=1756007991242" alt="Lakeview Comms CAD" class="login-logo">
+        <div class="login-card">
+            <h1 class="login-title">Lakeview Comms CAD</h1>
+            <p class="login-subtitle">Emergency Communications Center</p>
+            
+            <div class="login-warning">
+                <p><strong>Warning:</strong> This system contains sensitive law enforcement information. Access is restricted to authorized ECC personnel only.</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label">Discord ID</label>
+                    <input type="text" class="form-input" id="discord-id" placeholder="Enter your Discord ID" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Roblox Username</label>
+                    <input type="text" class="form-input" id="roblox-username" placeholder="Enter your Roblox username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Position</label>
+                    <select class="form-input" id="position" required>
+                        <option value="">Select your position</option>
+                        <option value="Dispatcher">Dispatcher</option>
+                        <option value="Senior Dispatcher">Senior Dispatcher</option>
+                        <option value="ECC Supervisor">ECC Supervisor</option>
+                        <option value="Administrator">Administrator</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="login-btn">Access CAD System</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="confirmation-modal" id="confirmation-modal">
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="confirmation-title">Shift Logged Successfully</h2>
+            <p class="confirmation-message">Your shift has been logged in our system. You are now connected to the Lakeview Comms CAD system. Thank you for your service!</p>
+            <button class="confirmation-btn" id="close-confirmation">Continue to CAD</button>
+        </div>
+    </div>
+
+    <!-- Priority Alert -->
+    <div class="priority-alert" id="priority-alert"></div>
+
+    <!-- CAD Application -->
+    <div class="app-container" id="cad-app">
+        <header>
+            <div class="logo-container">
+                <img src="https://ik.imagekit.io/seqcqjmzq/e595f6f1-e9e2-44a1-8b97-0c5afc307593.png?updatedAt=1756007991242" alt="Lakeview Comms CAD" class="logo">
+                <div class="title">Lakeview Comms CAD</div>
+            </div>
+            <div class="user-info">
+                <div class="status-indicator"></div>
+                <div class="user-details">
+                    <div class="user-id" id="display-user-id">User#0000</div>
+                    <div class="shift-time" id="shift-timer">Shift: 00:00:00</div>
+                </div>
+                <button class="sign-out-btn" id="sign-out-btn">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Panel: Call List -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-list"></i>
+                        Incident Queue
+                    </div>
+                    <div class="panel-actions">
+                        <button class="btn" id="new-call-btn">
+                            <i class="fas fa-plus"></i> New Call
+                        </button>
+                    </div>
+                </div>
+                <div class="call-list" id="call-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <p>No active incidents</p>
+                        <p class="text-sm">Create a new call to get started</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: Active Incident -->
+            <div class="panel">
+                <div class="active-incident">
+                    <div class="incident-header" id="active-incident-header">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-binoculars"></i>
+                            </div>
+                            <p>No incident selected</p>
+                            <p class="text-sm">Select an incident from the queue to view details</p>
+                        </div>
+                    </div>
+
+                    <div class="narrative-container">
+                        <div class="narrative-title">
+                            <i class="fas fa-scroll"></i>
+                            Incident Narrative
+                        </div>
+                        <div class="narrative-log" id="narrative-log">
+                            <!-- Narrative entries will be added here -->
+                        </div>
+                        <div class="narrative-input">
+                            <input type="text" id="narrative-input" placeholder="Add narrative entry..." disabled>
+                            <button id="add-narrative" disabled>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="assigned-units">
+                        <div class="units-title">
+                            <i class="fas fa-users"></i>
+                            Assigned Units
+                        </div>
+                        <div class="unit-tags" id="assigned-units">
+                            <!-- Assigned units will be added here -->
+                        </div>
+                    </div>
+
+                    <div class="panel-actions mt-15">
+                        <button class="btn priority-btn" id="priority-btn">
+                            <i class="fas fa-exclamation-triangle"></i> Priority Situation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Unit List -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-car"></i>
+                        Unit Status Board
+                    </div>
+                    <div class="panel-actions">
+                        <button class="btn" id="add-unit-btn">
+                            <i class="fas fa-plus"></i> Add Unit
+                        </button>
+                    </div>
+                </div>
+                <div class="unit-list" id="unit-list">
+                    <!-- Units will be added here dynamically -->
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <p>No units available</p>
+                        <p class="text-sm">Add units to the status board</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Call Modal -->
+    <div class="modal" id="new-call-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Create New Call</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="new-call-form">
+                <div class="form-group">
+                    <label class="form-label">Call Type</label>
+                    <input type="text" class="form-input" id="call-type" placeholder="e.g., 10-50 Traffic Accident" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" id="call-location" placeholder="Enter location..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Caller Information</label>
+                    <input type="text" class="form-input" id="caller-info" placeholder="Name, callback number...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Initial Narrative</label>
+                    <textarea class="form-textarea" id="initial-narrative" placeholder="Enter initial details..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <div class="status-options">
+                        <div class="status-option" data-value="low">Low</div>
+                        <div class="status-option active" data-value="medium">Medium</div>
+                        <div class="status-option" data-value="high">High</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-call">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Call</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Priority Situation Modal -->
+    <div class="modal" id="priority-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Active Priority Situation</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="priority-options">
+                <div class="priority-option" data-type="10-80 Pursuit">10-80 Pursuit</div>
+                <div class="priority-option" data-type="10-62 Kidnapping">10-62 Kidnapping</div>
+                <div class="priority-option" data-type="10-64 Hostage">10-64 Hostage</div>
+                <div class="priority-option" data-type="10-13 Shooting">10-13 Shooting</div>
+                <div class="priority-option" data-type="10-67 Fire">10-67 Fire</div>
+                <div class="priority-option" data-type="10-68 Robbery">10-68 Robbery</div>
+                <div class="priority-option" data-type="10-10 Fight">10-10 Fight</div>
+                <div class="priority-option" data-type="10-25 Domestic">10-25 Domestic</div>
+            </div>
+            <div class="form-actions mt-15">
+                <button type="button" class="btn btn-secondary" id="cancel-priority">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Unit Modal -->
+    <div class="modal" id="add-unit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add New Unit</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="add-unit-form">
+                <div class="form-group">
+                    <label class="form-label">Department</label>
+                    <div class="department-selection">
+                        <div class="department-option active" data-department="law-enforcement">
+                            <img src="https://ik.imagekit.io/seqcqjmzq/Lakview%20Police.webp?updatedAt=1762546742643" alt="Law Enforcement" class="department-option-logo">
+                            <span>Law Enforcement</span>
+                        </div>
+                        <div class="department-option" data-department="fire">
+                            <img src="https://ik.imagekit.io/seqcqjmzq/Lakeview%20Fire.webp?updatedAt=1762546987614" alt="Fire District" class="department-option-logo">
+                            <span>Fire District</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Unit Call Sign (101-499)</label>
+                    <input type="number" class="form-input" id="unit-id" placeholder="e.g., 101, 205, 499" min="101" max="499" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rank/Position</label>
+                    <input type="text" class="form-input" id="unit-rank" placeholder="e.g., Officer, Sergeant, Firefighter" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Location</label>
+                    <input type="text" class="form-input" id="unit-location" placeholder="Enter last known location..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <div class="status-options">
+                        <div class="status-option active" data-value="10-8">10-8 Available</div>
+                        <div class="status-option" data-value="10-6">10-6 Busy</div>
+                        <div class="status-option" data-value="10-7">10-7 Out of Service</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Roblox Username</label>
+                    <input type="text" class="form-input" id="officer-name" placeholder="Enter officer's Roblox username..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Recent Code</label>
+                    <input type="text" class="form-input" id="recent-code" placeholder="e.g., 10-11 Traffic Stop">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-unit">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Unit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            user: null,
+            shiftStart: null,
+            calls: [],
+            units: [],
+            activeCall: null,
+            callCounter: 1,
+            selectedPriority: 'medium',
+            selectedUnitStatus: '10-8',
+            selectedDepartment: 'law-enforcement',
+            activePrioritySituation: null
+        };
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const cadApp = document.getElementById('cad-app');
+        const loginForm = document.getElementById('login-form');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const closeConfirmationBtn = document.getElementById('close-confirmation');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const displayUserId = document.getElementById('display-user-id');
+        const shiftTimer = document.getElementById('shift-timer');
+        const priorityAlert = document.getElementById('priority-alert');
+        const callList = document.getElementById('call-list');
+        const unitList = document.getElementById('unit-list');
+        const activeIncidentHeader = document.getElementById('active-incident-header');
+        const narrativeLog = document.getElementById('narrative-log');
+        const narrativeInput = document.getElementById('narrative-input');
+        const addNarrativeBtn = document.getElementById('add-narrative');
+        const assignedUnits = document.getElementById('assigned-units');
+        const priorityBtn = document.getElementById('priority-btn');
+        const newCallBtn = document.getElementById('new-call-btn');
+        const newCallModal = document.getElementById('new-call-modal');
+        const newCallForm = document.getElementById('new-call-form');
+        const cancelCallBtn = document.getElementById('cancel-call');
+        const priorityModal = document.getElementById('priority-modal');
+        const cancelPriorityBtn = document.getElementById('cancel-priority');
+        const addUnitBtn = document.getElementById('add-unit-btn');
+        const addUnitModal = document.getElementById('add-unit-modal');
+        const addUnitForm = document.getElementById('add-unit-form');
+        const cancelUnitBtn = document.getElementById('cancel-unit');
+        const closeButtons = document.querySelectorAll('.close-modal');
+
+        // Initialize the application
+        function init() {
+            // Check if user is already logged in (for page refresh)
+            const savedUser = localStorage.getItem('lkv_user');
+            if (savedUser) {
+                state.user = JSON.parse(savedUser);
+                state.shiftStart = new Date(localStorage.getItem('lkv_shift_start'));
+                startCAD();
+            }
+
+            // Event Listeners
+            loginForm.addEventListener('submit', handleLogin);
+            closeConfirmationBtn.addEventListener('click', closeConfirmation);
+            signOutBtn.addEventListener('click', handleSignOut);
+            newCallBtn.addEventListener('click', () => newCallModal.style.display = 'flex');
+            cancelCallBtn.addEventListener('click', () => newCallModal.style.display = 'none');
+            newCallForm.addEventListener('submit', handleNewCall);
+            priorityBtn.addEventListener('click', () => priorityModal.style.display = 'flex');
+            cancelPriorityBtn.addEventListener('click', () => priorityModal.style.display = 'none');
+            addUnitBtn.addEventListener('click', () => addUnitModal.style.display = 'flex');
+            cancelUnitBtn.addEventListener('click', () => addUnitModal.style.display = 'none');
+            addUnitForm.addEventListener('submit', handleAddUnit);
+            addNarrativeBtn.addEventListener('click', addNarrativeEntry);
+            narrativeInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addNarrativeEntry();
+            });
+
+            // Status option selection
+            document.querySelectorAll('.status-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const parent = this.closest('.form-group');
+                    parent.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (parent.querySelector('#unit-id')) {
+                        state.selectedUnitStatus = this.getAttribute('data-value');
+                    } else {
+                        state.selectedPriority = this.getAttribute('data-value');
+                    }
+                });
+            });
+
+            // Department option selection
+            document.querySelectorAll('.department-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.department-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    state.selectedDepartment = this.getAttribute('data-department');
+                });
+            });
+
+            // Priority option selection
+            document.querySelectorAll('.priority-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const situationType = this.getAttribute('data-type');
+                    activatePrioritySituation(situationType);
+                    priorityModal.style.display = 'none';
+                });
+            });
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    newCallModal.style.display = 'none';
+                    addUnitModal.style.display = 'none';
+                    priorityModal.style.display = 'none';
+                });
+            });
+
+            // Close modals when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === newCallModal) newCallModal.style.display = 'none';
+                if (event.target === addUnitModal) addUnitModal.style.display = 'none';
+                if (event.target === priorityModal) priorityModal.style.display = 'none';
+            });
+
+            // Setup drag and drop
+            setupDragAndDrop();
+        }
+
+        // Setup drag and drop functionality
+        function setupDragAndDrop() {
+            const assignedUnitsContainer = document.getElementById('assigned-units');
+            
+            // Allow drop
+            assignedUnitsContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                assignedUnitsContainer.classList.add('drag-over');
+            });
+            
+            assignedUnitsContainer.addEventListener('dragleave', () => {
+                assignedUnitsContainer.classList.remove('drag-over');
+            });
+            
+            // Handle drop
+            assignedUnitsContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                assignedUnitsContainer.classList.remove('drag-over');
+                
+                const unitId = e.dataTransfer.getData('text/plain');
+                if (unitId && state.activeCall) {
+                    if (!state.activeCall.assignedUnits.includes(unitId)) {
+                        state.activeCall.assignedUnits.push(unitId);
+                        renderAssignedUnits();
+                        
+                        // Add narrative entry
+                        state.activeCall.narrative.push({
+                            timestamp: new Date(),
+                            text: `Unit ${unitId} assigned to incident via drag & drop.`
+                        });
+                        renderNarrativeLog();
+                    }
+                }
+            });
+        }
+
+        // Activate a priority situation
+        function activatePrioritySituation(situationType) {
+            state.activePrioritySituation = situationType;
+            
+            // Extract code from situation type (e.g., "10-80 Pursuit" -> "10-80")
+            const code = situationType.split(' ')[0];
+            
+            // Show priority alert
+            priorityAlert.textContent = `${situationType} ACTIVE`;
+            priorityAlert.style.display = 'block';
+            
+            // Add animation for slashing effect
+            let slashVisible = true;
+            const slashInterval = setInterval(() => {
+                priorityAlert.textContent = slashVisible ? 
+                    `${situationType} ACTIVE` : 
+                    `${situationType} ACTIVE`;
+                slashVisible = !slashVisible;
+            }, 1000);
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                clearInterval(slashInterval);
+                priorityAlert.style.display = 'none';
+                state.activePrioritySituation = null;
+            }, 10000);
+        }
+
+        // Handle user login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const discordId = document.getElementById('discord-id').value;
+            const robloxUsername = document.getElementById('roblox-username').value;
+            const position = document.getElementById('position').value;
+            
+            state.user = {
+                discordId,
+                robloxUsername,
+                position
+            };
+            
+            state.shiftStart = new Date();
+            
+            // Save to localStorage
+            localStorage.setItem('lkv_user', JSON.stringify(state.user));
+            localStorage.setItem('lkv_shift_start', state.shiftStart.toISOString());
+            
+            // Show confirmation modal
+            confirmationModal.style.display = 'flex';
+        }
+
+        // Close confirmation and start CAD
+        function closeConfirmation() {
+            confirmationModal.style.display = 'none';
+            startCAD();
+        }
+
+        // Start the CAD application
+        function startCAD() {
+            loginScreen.style.display = 'none';
+            cadApp.style.display = 'grid';
+            
+            // Update user info
+            displayUserId.textContent = state.user.discordId;
+            
+            // Start shift timer
+            updateShiftTimer();
+            setInterval(updateShiftTimer, 1000);
+            
+            // Load initial data if any
+            loadInitialData();
+        }
+
+        // Update shift timer
+        function updateShiftTimer() {
+            const now = new Date();
+            const diff = now - state.shiftStart;
+            
+            const hours = Math.floor(diff / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            shiftTimer.textContent = `Shift: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Handle sign out
+        function handleSignOut() {
+            // Clear localStorage
+            localStorage.removeItem('lkv_user');
+            localStorage.removeItem('lkv_shift_start');
+            
+            // Reset state
+            state.user = null;
+            state.shiftStart = null;
+            state.calls = [];
+            state.units = [];
+            state.activeCall = null;
+            state.activePrioritySituation = null;
+            
+            // Show login screen
+            cadApp.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            
+            // Reset form
+            loginForm.reset();
+        }
+
+        // Load initial data
+        function loadInitialData() {
+            // In a real app, this would fetch from an API
+            // For now, we'll start with empty arrays
+            renderCallList();
+            renderUnitList();
+        }
+
+        // Handle new call creation
+        function handleNewCall(e) {
+            e.preventDefault();
+            
+            const callType = document.getElementById('call-type').value;
+            const location = document.getElementById('call-location').value;
+            const callerInfo = document.getElementById('caller-info').value;
+            const initialNarrative = document.getElementById('initial-narrative').value;
+            const priority = state.selectedPriority;
+            
+            const callId = `I-2023-${state.callCounter.toString().padStart(4, '0')}`;
+            state.callCounter++;
+            
+            const newCall = {
+                id: callId,
+                type: callType,
+                location,
+                callerInfo,
+                priority,
+                narrative: initialNarrative ? [{
+                    timestamp: new Date(),
+                    text: initialNarrative
+                }] : [],
+                status: 'pending',
+                assignedUnits: [],
+                createdAt: new Date()
+            };
+            
+            state.calls.push(newCall);
+            renderCallList();
+            
+            // Close modal and reset form
+            newCallModal.style.display = 'none';
+            newCallForm.reset();
+            
+            // Select the new call
+            selectCall(newCall.id);
+        }
+
+        // Handle adding a new unit
+        function handleAddUnit(e) {
+            e.preventDefault();
+            
+            const unitId = document.getElementById('unit-id').value;
+            const rank = document.getElementById('unit-rank').value;
+            const location = document.getElementById('unit-location').value;
+            const status = state.selectedUnitStatus;
+            const officerName = document.getElementById('officer-name').value;
+            const recentCode = document.getElementById('recent-code').value;
+            const department = state.selectedDepartment;
+            
+            // Validate unit ID
+            const unitNum = parseInt(unitId);
+            if (unitNum < 101 || unitNum > 499) {
+                alert('Unit ID must be between 101 and 499');
+                return;
+            }
+            
+            const newUnit = {
+                id: unitId,
+                officer: officerName,
+                rank,
+                location,
+                status,
+                recentCode,
+                department,
+                statusTime: new Date(),
+                addedTime: new Date()
+            };
+            
+            state.units.push(newUnit);
+            renderUnitList();
+            
+            // Close modal and reset form
+            addUnitModal.style.display = 'none';
+            addUnitForm.reset();
+            
+            // Reset status to default
+            state.selectedUnitStatus = '10-8';
+            document.querySelectorAll('.status-option').forEach(opt => {
+                opt.classList.remove('active');
+                if (opt.getAttribute('data-value') === '10-8') {
+                    opt.classList.add('active');
+                }
+            });
+        }
+
+        // Render the call list
+        function renderCallList() {
+            if (state.calls.length === 0) {
+                callList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <p>No active incidents</p>
+                        <p class="text-sm">Create a new call to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            callList.innerHTML = '';
+            state.calls.forEach(call => {
+                const callElement = document.createElement('div');
+                callElement.className = `call-item priority-${call.priority} ${state.activeCall && state.activeCall.id === call.id ? 'active' : ''}`;
+                callElement.dataset.id = call.id;
+                
+                const priorityText = call.priority === 'high' ? 'HIGH' : 
+                                   call.priority === 'medium' ? 'MEDIUM' : 'LOW';
+                
+                callElement.innerHTML = `
+                    <div class="call-header">
+                        <div class="call-id">${call.id}</div>
+                        <div class="call-priority">${priorityText}</div>
+                    </div>
+                    <div class="call-location">${call.location}</div>
+                    <div class="call-type">${call.type}</div>
+                `;
+                
+                callElement.addEventListener('click', () => selectCall(call.id));
+                callList.appendChild(callElement);
+            });
+        }
+
+        // Render the unit list
+        function renderUnitList() {
+            if (state.units.length === 0) {
+                unitList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <p>No units available</p>
+                        <p class="text-sm">Add units to the status board</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group units by department
+            const departments = {
+                'law-enforcement': state.units.filter(u => u.department === 'law-enforcement'),
+                'fire': state.units.filter(u => u.department === 'fire')
+            };
+            
+            unitList.innerHTML = '';
+            
+            // Render Law Enforcement Department
+            if (departments['law-enforcement'].length > 0) {
+                const lawEnforcementSection = document.createElement('div');
+                lawEnforcementSection.className = 'department-section';
+                
+                lawEnforcementSection.innerHTML = `
+                    <div class="department-header">
+                        <img src="https://ik.imagekit.io/seqcqjmzq/Lakview%20Police.webp?updatedAt=1762546742643" alt="Law Enforcement" class="department-logo">
+                        <div class="department-title">Lakeview Law Enforcement</div>
+                    </div>
+                `;
+                
+                // Organize by rank
+                const lawRanks = organizeByRank(departments['law-enforcement'], 'law');
+                Object.keys(lawRanks).forEach(rankGroup => {
+                    const rankSection = document.createElement('div');
+                    rankSection.className = 'rank-section';
+                    rankSection.innerHTML = `<div class="rank-title">${rankGroup}</div>`;
+                    
+                    lawRanks[rankGroup].forEach(unit => {
+                        rankSection.appendChild(createUnitElement(unit));
+                    });
+                    
+                    lawEnforcementSection.appendChild(rankSection);
+                });
+                
+                unitList.appendChild(lawEnforcementSection);
+            }
+            
+            // Render Fire Department
+            if (departments['fire'].length > 0) {
+                const fireSection = document.createElement('div');
+                fireSection.className = 'department-section';
+                
+                fireSection.innerHTML = `
+                    <div class="department-header">
+                        <img src="https://ik.imagekit.io/seqcqjmzq/Lakeview%20Fire.webp?updatedAt=1762546987614" alt="Fire District" class="department-logo">
+                        <div class="department-title">Lakeview City Fire District</div>
+                    </div>
+                `;
+                
+                // Organize by rank
+                const fireRanks = organizeByRank(departments['fire'], 'fire');
+                Object.keys(fireRanks).forEach(rankGroup => {
+                    const rankSection = document.createElement('div');
+                    rankSection.className = 'rank-section';
+                    rankSection.innerHTML = `<div class="rank-title">${rankGroup}</div>`;
+                    
+                    fireRanks[rankGroup].forEach(unit => {
+                        rankSection.appendChild(createUnitElement(unit));
+                    });
+                    
+                    fireSection.appendChild(rankSection);
+                });
+                
+                unitList.appendChild(fireSection);
+            }
+        }
+
+        // Organize units by rank
+        function organizeByRank(units, department) {
+            const lawRanks = {
+                'Commissioners': ['Commissioner', 'Chief of Police', 'Deputy Chief'],
+                'Supervisor+': ['Sergeant', 'Lieutenant', 'Captain', 'Commander'],
+                'Corporal': ['Corporal'],
+                'Senior Officer': ['Senior Officer', 'Detective'],
+                'Officer': ['Officer', 'Deputy', 'Trooper'],
+                'Unranked': ['Cadet', 'Trainee', 'Probationary'],
+                'Other': []
+            };
+            
+            const fireRanks = {
+                'Chiefs': ['Chief', 'Deputy Chief', 'Assistant Chief'],
+                'Captain': ['Captain'],
+                'Lieutenant+': ['Lieutenant', 'Battalion Chief'],
+                'Firefighter': ['Firefighter', 'Engineer', 'Paramedic'],
+                'Unranked': ['Probationary', 'Trainee', 'Cadet'],
+                'Other': []
+            };
+            
+            const rankStructure = department === 'law' ? lawRanks : fireRanks;
+            const organized = {};
+            
+            // Initialize all rank groups
+            Object.keys(rankStructure).forEach(group => {
+                organized[group] = [];
+            });
+            
+            // Sort units into rank groups
+            units.forEach(unit => {
+                let placed = false;
+                for (const [group, ranks] of Object.entries(rankStructure)) {
+                    if (ranks.some(rank => unit.rank.toLowerCase().includes(rank.toLowerCase()))) {
+                        organized[group].push(unit);
+                        placed = true;
+                        break;
+                    }
+                }
+                
+                if (!placed) {
+                    organized['Other'].push(unit);
+                }
+            });
+            
+            // Remove empty groups
+            Object.keys(organized).forEach(group => {
+                if (organized[group].length === 0) {
+                    delete organized[group];
+                }
+            });
+            
+            return organized;
+        }
+
+        // Create a unit element
+        function createUnitElement(unit) {
+            const unitElement = document.createElement('div');
+            unitElement.className = 'unit-item';
+            unitElement.draggable = true;
+            unitElement.dataset.id = unit.id;
+            
+            // Calculate time since status change
+            const statusTime = new Date(unit.statusTime);
+            const now = new Date();
+            const diffMs = now - statusTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            // Calculate time since unit was added
+            const addedTime = new Date(unit.addedTime);
+            const totalDiffMs = now - addedTime;
+            const totalDiffMins = Math.floor(totalDiffMs / 60000);
+            
+            // Determine status class
+            let statusClass = 'available';
+            if (unit.status === '10-6') statusClass = 'busy';
+            else if (unit.status === '10-7') statusClass = 'out-of-service';
+            
+            unitElement.innerHTML = `
+                <div class="unit-status ${statusClass}"></div>
+                <div class="unit-info">
+                    <div class="unit-id">Unit ${unit.id}</div>
+                    <div class="unit-officer">${unit.officer} • ${unit.rank}</div>
+                    <div class="unit-location">${unit.location}</div>
+                    <div class="unit-status-time">Status: ${unit.status} (${diffMins}m ago) | Added: ${totalDiffMins}m ago</div>
+                </div>
+                <div class="unit-actions">
+                    <button class="unit-action-btn" data-id="${unit.id}" data-action="update">Update</button>
+                    <button class="unit-action-btn" data-id="${unit.id}" data-action="remove">Remove</button>
+                </div>
+            `;
+            
+            // Add event listeners for unit actions
+            unitElement.querySelectorAll('.unit-action-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const unitId = this.getAttribute('data-id');
+                    const action = this.getAttribute('data-action');
+                    
+                    if (action === 'update') {
+                        updateUnit(unitId);
+                    } else if (action === 'remove') {
+                        removeUnit(unitId);
+                    }
+                });
+            });
+            
+            // Add drag events
+            unitElement.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', unit.id);
+                unitElement.style.opacity = '0.5';
+            });
+            
+            unitElement.addEventListener('dragend', () => {
+                unitElement.style.opacity = '1';
+            });
+            
+            return unitElement;
+        }
+
+        // Update unit information
+        function updateUnit(unitId) {
+            const unit = state.units.find(u => u.id === unitId);
+            if (!unit) return;
+            
+            const newLocation = prompt('Enter new location:', unit.location);
+            if (newLocation === null) return;
+            
+            const newStatus = prompt('Enter new status (10-8, 10-6, 10-7):', unit.status);
+            if (newStatus === null) return;
+            
+            if (['10-8', '10-6', '10-7'].includes(newStatus)) {
+                unit.location = newLocation;
+                unit.status = newStatus;
+                unit.statusTime = new Date();
+                renderUnitList();
+            } else {
+                alert('Invalid status. Must be 10-8, 10-6, or 10-7');
+            }
+        }
+
+        // Remove a unit
+        function removeUnit(unitId) {
+            if (confirm('Are you sure you want to remove this unit?')) {
+                state.units = state.units.filter(u => u.id !== unitId);
+                renderUnitList();
+            }
+        }
+
+        // Select a call to view details
+        function selectCall(callId) {
+            state.activeCall = state.calls.find(call => call.id === callId);
+            
+            if (!state.activeCall) return;
+            
+            // Update the active incident header
+            const priorityText = state.activeCall.priority === 'high' ? 'HIGH PRIORITY' : 
+                               state.activeCall.priority === 'medium' ? 'MEDIUM PRIORITY' : 'LOW PRIORITY';
+            
+            activeIncidentHeader.innerHTML = `
+                <div class="incident-title">
+                    <div class="incident-id">${state.activeCall.id}</div>
+                    <div class="incident-priority">${priorityText}</div>
+                </div>
+                <div class="incident-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value">${state.activeCall.location}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Call Type</div>
+                        <div class="detail-value">${state.activeCall.type}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Caller</div>
+                        <div class="detail-value">${state.activeCall.callerInfo || 'Unknown'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Received</div>
+                        <div class="detail-value">${state.activeCall.createdAt.toLocaleTimeString()}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update narrative log
+            renderNarrativeLog();
+            
+            // Update assigned units
+            renderAssignedUnits();
+            
+            // Enable inputs
+            narrativeInput.disabled = false;
+            addNarrativeBtn.disabled = false;
+            
+            // Re-render call list to update active state
+            renderCallList();
+        }
+
+        // Render the narrative log
+        function renderNarrativeLog() {
+            if (!state.activeCall || state.activeCall.narrative.length === 0) {
+                narrativeLog.innerHTML = '<div class="text-center">No narrative entries yet</div>';
+                return;
+            }
+            
+            narrativeLog.innerHTML = '';
+            state.activeCall.narrative.forEach(entry => {
+                const entryElement = document.createElement('div');
+                entryElement.className = 'narrative-entry';
+                entryElement.innerHTML = `
+                    <div class="narrative-time">[${entry.timestamp.toLocaleTimeString()}]</div>
+                    <div>${entry.text}</div>
+                `;
+                narrativeLog.appendChild(entryElement);
+            });
+            
+            // Scroll to bottom
+            narrativeLog.scrollTop = narrativeLog.scrollHeight;
+        }
+
+        // Render assigned units
+        function renderAssignedUnits() {
+            if (!state.activeCall || state.activeCall.assignedUnits.length === 0) {
+                assignedUnits.innerHTML = '<div class="text-center">No units assigned</div>';
+                return;
+            }
+            
+            assignedUnits.innerHTML = '';
+            state.activeCall.assignedUnits.forEach(unitId => {
+                const unit = state.units.find(u => u.id === unitId);
+                if (!unit) return;
+                
+                const unitTag = document.createElement('div');
+                unitTag.className = 'unit-tag';
+                unitTag.innerHTML = `
+                    Unit ${unitId}
+                    <button class="unit-tag-remove" data-id="${unitId}">&times;</button>
+                `;
+                
+                unitTag.querySelector('.unit-tag-remove').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    state.activeCall.assignedUnits = state.activeCall.assignedUnits.filter(id => id !== unitId);
+                    renderAssignedUnits();
+                });
+                
+                assignedUnits.appendChild(unitTag);
+            });
+        }
+
+        // Add a narrative entry
+        function addNarrativeEntry() {
+            const text = narrativeInput.value.trim();
+            if (!text || !state.activeCall) return;
+            
+            const entry = {
+                timestamp: new Date(),
+                text
+            };
+            
+            state.activeCall.narrative.push(entry);
+            renderNarrativeLog();
+            
+            // Clear input
+            narrativeInput.value = '';
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
