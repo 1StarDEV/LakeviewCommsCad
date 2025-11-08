@@ -35,11 +35,11 @@
             font-size: 14px;
         }
 
-        /* Beta Badge */
+        /* Beta Badge - Moved to not interfere */
         .beta-badge {
             position: fixed;
             top: 10px;
-            right: 10px;
+            left: 10px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             padding: 6px 12px;
@@ -420,23 +420,23 @@
             transform: translateY(-1px);
         }
 
-        /* Tools Button */
+        /* Tools Button - Smaller and only visible when logged in */
         .tools-btn {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
             box-shadow: 0 4px 15px rgba(162, 22, 28, 0.4);
             z-index: 100;
             transition: all 0.3s ease;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
         }
@@ -449,7 +449,7 @@
         /* Tools Panel */
         .tools-panel {
             position: fixed;
-            bottom: 80px;
+            bottom: 70px;
             right: 20px;
             background: var(--card-bg);
             border-radius: 12px;
@@ -763,7 +763,7 @@
             color: var(--gray);
         }
 
-        /* Unit Assignment */
+        /* Unit Assignment - Custom Dropdown */
         .unit-assignment {
             margin-top: 15px;
             padding-top: 15px;
@@ -828,15 +828,51 @@
             background: var(--primary);
         }
 
-        .unit-select {
+        /* Custom Select */
+        .custom-select {
+            position: relative;
             width: 100%;
-            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .custom-select-header {
+            padding: 8px 12px;
             background: var(--accent);
             border: 1px solid var(--border);
             border-radius: 6px;
-            color: white;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .custom-select-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .custom-select-option:last-child {
+            border-bottom: none;
+        }
+
+        .custom-select-option:hover {
+            background: var(--primary);
         }
 
         .assign-btn {
@@ -1455,6 +1491,88 @@
             line-height: 1.4;
         }
 
+        /* New Section: Active Alerts */
+        .active-alerts {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 600px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-icon.priority {
+            background: var(--danger);
+        }
+
+        .alert-icon.signal {
+            background: var(--warning);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .alert-description {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .alert-time {
+            font-size: 0.7rem;
+            color: var(--gray);
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .alert-close:hover {
+            color: var(--light);
+        }
+
         /* Utility Classes */
         .text-sm {
             font-size: 0.8rem;
@@ -1536,13 +1654,18 @@
     </style>
 </head>
 <body>
-    <!-- Beta Badge -->
+    <!-- Beta Badge - Moved to left side -->
     <div class="beta-badge">BETA • Under Development & Testing</div>
 
     <!-- LKVC Branding -->
     <div class="lkvc-brand">
         <img src="https://ik.imagekit.io/tycncf0zq0/Lakeview%20City%20Roleplay.png?updatedAt=1762564831685" alt="LKVC" class="lkvc-logo">
         <span>Lakeview City Roleplay</span>
+    </div>
+
+    <!-- Active Alerts Section -->
+    <div class="active-alerts" id="active-alerts">
+        <!-- Priority and Signal alerts will appear here -->
     </div>
 
     <!-- Login Screen -->
@@ -1569,13 +1692,18 @@
                 
                 <div class="form-group">
                     <label class="form-label">Position</label>
-                    <select class="form-select" id="position" required>
-                        <option value="">Select your position</option>
-                        <option value="Dispatcher">Dispatcher</option>
-                        <option value="Senior Dispatcher">Senior Dispatcher</option>
-                        <option value="ECC Supervisor">ECC Supervisor</option>
-                        <option value="Administrator">Administrator</option>
-                    </select>
+                    <div class="custom-select" id="position-select">
+                        <div class="custom-select-header">
+                            <span>Select your position</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="custom-select-options">
+                            <div class="custom-select-option" data-value="Dispatcher">Dispatcher</div>
+                            <div class="custom-select-option" data-value="Senior Dispatcher">Senior Dispatcher</div>
+                            <div class="custom-select-option" data-value="ECC Supervisor">ECC Supervisor</div>
+                            <div class="custom-select-option" data-value="Administrator">Administrator</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <button type="submit" class="login-btn">Access CAD System</button>
@@ -1619,12 +1747,6 @@
         <p class="success-message">Your session has been logged successfully! Thank you for your shift, this tab will close automatically in <span class="countdown" id="countdown">10</span> seconds.</p>
     </div>
 
-    <!-- Priority Alert -->
-    <div class="priority-alert" id="priority-alert"></div>
-
-    <!-- Signal Alert -->
-    <div class="signal-alert" id="signal-alert"></div>
-
     <!-- Tools Panel -->
     <div class="tools-panel" id="tools-panel">
         <div class="tools-header">
@@ -1653,10 +1775,17 @@
                     <div class="text-xs">Emergency response protocols</div>
                 </div>
             </div>
+            <div class="tool-option" data-tool="doc">
+                <i class="fas fa-file-alt"></i>
+                <div>
+                    <div class="text-sm">Documentation</div>
+                    <div class="text-xs">Complete system documentation</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Tools Button -->
+    <!-- Tools Button - Only visible when logged in -->
     <button class="tools-btn" id="tools-btn">
         <i class="fas fa-tools"></i>
     </button>
@@ -1791,6 +1920,53 @@
         </div>
     </div>
 
+    <!-- Documentation Modal -->
+    <div class="modal" id="doc-modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <div class="modal-title">Lakeview Comms CAD Documentation</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="guide-container">
+                <h3>Complete System Documentation</h3>
+                <p>Welcome to the Lakeview Comms CAD documentation. This guide will help you understand and use all features of the system effectively.</p>
+                
+                <div class="guide-category">
+                    <div class="guide-title">Getting Started</div>
+                    <div class="guide-steps">
+                        <div class="guide-step">1. <strong>Login:</strong> Use your Discord ID and Roblox username to access the system</div>
+                        <div class="guide-step">2. <strong>Interface Overview:</strong> Familiarize yourself with the three-panel layout</div>
+                        <div class="guide-step">3. <strong>Creating Incidents:</strong> Use the "New Call" button to create emergency incidents</div>
+                        <div class="guide-step">4. <strong>Managing Units:</strong> Add and assign units using the unit management panel</div>
+                    </div>
+                </div>
+                
+                <div class="guide-category">
+                    <div class="guide-title">Advanced Features</div>
+                    <div class="guide-steps">
+                        <div class="guide-step">• <strong>Priority Situations:</strong> Activate emergency protocols for critical incidents</div>
+                        <div class="guide-step">• <strong>Signal Activation:</strong> Use the tools panel to activate emergency signals</div>
+                        <div class="guide-step">• <strong>Supervisor Requests:</strong> Request supervisor assistance when needed</div>
+                        <div class="guide-step">• <strong>Narrative Logging:</strong> Maintain detailed incident records with timestamped entries</div>
+                    </div>
+                </div>
+                
+                <div class="guide-category">
+                    <div class="guide-title">Best Practices</div>
+                    <div class="guide-steps">
+                        <div class="guide-step">• Always verify unit availability before assignment</div>
+                        <div class="guide-step">• Use priority levels appropriately for incident severity</div>
+                        <div class="guide-step">• Maintain clear and concise narrative entries</div>
+                        <div class="guide-step">• Regularly update unit status and location information</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-doc">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- CAD Application -->
     <div class="app-container" id="cad-app">
         <header>
@@ -1883,9 +2059,15 @@
                             <input type="text" id="unit-search" placeholder="Search for units...">
                             <div class="search-results" id="search-results"></div>
                         </div>
-                        <select class="unit-select" id="unit-select">
-                            <option value="">Select a unit to assign</option>
-                        </select>
+                        <div class="custom-select" id="unit-select">
+                            <div class="custom-select-header">
+                                <span>Select a unit to assign</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-select-options" id="unit-options">
+                                <!-- Unit options will be added here -->
+                            </div>
+                        </div>
                         <button class="assign-btn" id="assign-btn">
                             <i class="fas fa-plus"></i> Assign Unit
                         </button>
@@ -2016,37 +2198,27 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Rank/Position</label>
-                    <select class="form-select" id="unit-rank" required>
-                        <option value="">Select Rank</option>
-                        <optgroup label="Law Enforcement">
-                            <option value="Commissioner">Commissioner</option>
-                            <option value="Chief of Police">Chief of Police</option>
-                            <option value="Deputy Chief">Deputy Chief</option>
-                            <option value="Captain">Captain</option>
-                            <option value="Lieutenant">Lieutenant</option>
-                            <option value="Sergeant">Sergeant</option>
-                            <option value="Corporal">Corporal</option>
-                            <option value="Senior Officer">Senior Officer</option>
-                            <option value="Detective">Detective</option>
-                            <option value="Officer">Officer</option>
-                            <option value="Deputy">Deputy</option>
-                            <option value="Cadet">Cadet</option>
-                        </optgroup>
-                        <optgroup label="Fire District">
-                            <option value="Chief">Chief</option>
-                            <option value="Deputy Chief">Deputy Chief</option>
-                            <option value="Assistant Chief">Assistant Chief</option>
-                            <option value="Battalion Chief">Battalion Chief</option>
-                            <option value="Captain">Captain</option>
-                            <option value="Lieutenant">Lieutenant</option>
-                            <option value="Engineer">Engineer</option>
-                            <option value="Firefighter">Firefighter</option>
-                            <option value="Paramedic">Paramedic</option>
-                            <option value="EMT">EMT</option>
-                            <option value="Probationary">Probationary</option>
-                        </optgroup>
-                        <option value="Other">Other</option>
-                    </select>
+                    <div class="custom-select" id="rank-select">
+                        <div class="custom-select-header">
+                            <span>Select Rank</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="custom-select-options">
+                            <div class="custom-select-option" data-value="Commissioner">Commissioner</div>
+                            <div class="custom-select-option" data-value="Chief of Police">Chief of Police</div>
+                            <div class="custom-select-option" data-value="Deputy Chief">Deputy Chief</div>
+                            <div class="custom-select-option" data-value="Captain">Captain</div>
+                            <div class="custom-select-option" data-value="Lieutenant">Lieutenant</div>
+                            <div class="custom-select-option" data-value="Sergeant">Sergeant</div>
+                            <div class="custom-select-option" data-value="Corporal">Corporal</div>
+                            <div class="custom-select-option" data-value="Senior Officer">Senior Officer</div>
+                            <div class="custom-select-option" data-value="Detective">Detective</div>
+                            <div class="custom-select-option" data-value="Officer">Officer</div>
+                            <div class="custom-select-option" data-value="Deputy">Deputy</div>
+                            <div class="custom-select-option" data-value="Cadet">Cadet</div>
+                            <div class="custom-select-option" data-value="Other">Other</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Last Location</label>
@@ -2090,7 +2262,8 @@
             selectedDepartment: 'law-enforcement',
             activePrioritySituation: null,
             selectedUnit: null,
-            activeSignals: []
+            activeSignals: [],
+            activeAlerts: []
         };
 
         // DOM Elements
@@ -2107,8 +2280,6 @@
         const countdownElement = document.getElementById('countdown');
         const displayUserId = document.getElementById('display-user-id');
         const shiftTimer = document.getElementById('shift-timer');
-        const priorityAlert = document.getElementById('priority-alert');
-        const signalAlert = document.getElementById('signal-alert');
         const toolsBtn = document.getElementById('tools-btn');
         const toolsPanel = document.getElementById('tools-panel');
         const closeToolsBtn = document.querySelector('.close-tools');
@@ -2122,6 +2293,7 @@
         const unitSearch = document.getElementById('unit-search');
         const searchResults = document.getElementById('search-results');
         const unitSelect = document.getElementById('unit-select');
+        const unitOptions = document.getElementById('unit-options');
         const assignBtn = document.getElementById('assign-btn');
         const priorityBtn = document.getElementById('priority-btn');
         const newCallBtn = document.getElementById('new-call-btn');
@@ -2146,7 +2318,12 @@
         const cancelSupervisorBtn = document.getElementById('cancel-supervisor');
         const guideModal = document.getElementById('guide-modal');
         const cancelGuideBtn = document.getElementById('cancel-guide');
+        const docModal = document.getElementById('doc-modal');
+        const cancelDocBtn = document.getElementById('cancel-doc');
+        const activeAlerts = document.getElementById('active-alerts');
         const closeButtons = document.querySelectorAll('.close-modal');
+        const positionSelect = document.getElementById('position-select');
+        const rankSelect = document.getElementById('rank-select');
 
         // Initialize the application
         function init() {
@@ -2183,9 +2360,14 @@
             cancelSignalBtn.addEventListener('click', () => signalModal.style.display = 'none');
             cancelSupervisorBtn.addEventListener('click', () => supervisorModal.style.display = 'none');
             cancelGuideBtn.addEventListener('click', () => guideModal.style.display = 'none');
+            cancelDocBtn.addEventListener('click', () => docModal.style.display = 'none');
             assignBtn.addEventListener('click', assignUnitToCall);
             unitSearch.addEventListener('input', handleUnitSearch);
-            unitSelect.addEventListener('change', handleUnitSelect);
+
+            // Custom Select functionality
+            setupCustomSelect(positionSelect);
+            setupCustomSelect(rankSelect);
+            setupCustomSelect(unitSelect);
 
             // Status option selection
             document.querySelectorAll('.status-option').forEach(option => {
@@ -2210,47 +2392,41 @@
                     state.selectedDepartment = this.getAttribute('data-department');
                     
                     // Update rank dropdown based on department
-                    const rankSelect = document.getElementById('unit-rank');
-                    rankSelect.innerHTML = '';
+                    const rankOptions = rankSelect.querySelector('.custom-select-options');
+                    rankOptions.innerHTML = '';
                     
                     if (state.selectedDepartment === 'law-enforcement') {
-                        rankSelect.innerHTML = `
-                            <option value="">Select Rank</option>
-                            <optgroup label="Law Enforcement">
-                                <option value="Commissioner">Commissioner</option>
-                                <option value="Chief of Police">Chief of Police</option>
-                                <option value="Deputy Chief">Deputy Chief</option>
-                                <option value="Captain">Captain</option>
-                                <option value="Lieutenant">Lieutenant</option>
-                                <option value="Sergeant">Sergeant</option>
-                                <option value="Corporal">Corporal</option>
-                                <option value="Senior Officer">Senior Officer</option>
-                                <option value="Detective">Detective</option>
-                                <option value="Officer">Officer</option>
-                                <option value="Deputy">Deputy</option>
-                                <option value="Cadet">Cadet</option>
-                            </optgroup>
-                            <option value="Other">Other</option>
-                        `;
+                        const lawRanks = [
+                            'Commissioner', 'Chief of Police', 'Deputy Chief', 'Captain', 
+                            'Lieutenant', 'Sergeant', 'Corporal', 'Senior Officer', 
+                            'Detective', 'Officer', 'Deputy', 'Cadet', 'Other'
+                        ];
+                        
+                        lawRanks.forEach(rank => {
+                            const option = document.createElement('div');
+                            option.className = 'custom-select-option';
+                            option.textContent = rank;
+                            option.setAttribute('data-value', rank);
+                            rankOptions.appendChild(option);
+                        });
                     } else {
-                        rankSelect.innerHTML = `
-                            <option value="">Select Rank</option>
-                            <optgroup label="Fire District">
-                                <option value="Chief">Chief</option>
-                                <option value="Deputy Chief">Deputy Chief</option>
-                                <option value="Assistant Chief">Assistant Chief</option>
-                                <option value="Battalion Chief">Battalion Chief</option>
-                                <option value="Captain">Captain</option>
-                                <option value="Lieutenant">Lieutenant</option>
-                                <option value="Engineer">Engineer</option>
-                                <option value="Firefighter">Firefighter</option>
-                                <option value="Paramedic">Paramedic</option>
-                                <option value="EMT">EMT</option>
-                                <option value="Probationary">Probationary</option>
-                            </optgroup>
-                            <option value="Other">Other</option>
-                        `;
+                        const fireRanks = [
+                            'Chief', 'Deputy Chief', 'Assistant Chief', 'Battalion Chief',
+                            'Captain', 'Lieutenant', 'Engineer', 'Firefighter',
+                            'Paramedic', 'EMT', 'Probationary', 'Other'
+                        ];
+                        
+                        fireRanks.forEach(rank => {
+                            const option = document.createElement('div');
+                            option.className = 'custom-select-option';
+                            option.textContent = rank;
+                            option.setAttribute('data-value', rank);
+                            rankOptions.appendChild(option);
+                        });
                     }
+                    
+                    // Re-setup the custom select
+                    setupCustomSelect(rankSelect);
                 });
             });
 
@@ -2288,6 +2464,7 @@
                     signalModal.style.display = 'none';
                     supervisorModal.style.display = 'none';
                     guideModal.style.display = 'none';
+                    docModal.style.display = 'none';
                 });
             });
 
@@ -2301,6 +2478,7 @@
                 if (event.target === signalModal) signalModal.style.display = 'none';
                 if (event.target === supervisorModal) supervisorModal.style.display = 'none';
                 if (event.target === guideModal) guideModal.style.display = 'none';
+                if (event.target === docModal) docModal.style.display = 'none';
                 if (!event.target.closest('.tools-panel') && !event.target.closest('.tools-btn')) {
                     toolsPanel.style.display = 'none';
                 }
@@ -2315,6 +2493,37 @@
 
             // Load initial data
             loadInitialData();
+        }
+
+        // Setup custom select functionality
+        function setupCustomSelect(selectElement) {
+            const header = selectElement.querySelector('.custom-select-header');
+            const options = selectElement.querySelector('.custom-select-options');
+            
+            header.addEventListener('click', () => {
+                options.style.display = options.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            options.querySelectorAll('.custom-select-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    header.querySelector('span').textContent = option.textContent;
+                    options.style.display = 'none';
+                    
+                    // Store the selected value
+                    if (selectElement === positionSelect) {
+                        state.selectedPosition = option.getAttribute('data-value');
+                    } else if (selectElement === rankSelect) {
+                        state.selectedRank = option.getAttribute('data-value');
+                    }
+                });
+            });
+            
+            // Close when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!selectElement.contains(e.target)) {
+                    options.style.display = 'none';
+                }
+            });
         }
 
         // Handle unit search
@@ -2338,7 +2547,8 @@
                     resultElement.className = 'search-result';
                     resultElement.textContent = `Unit ${unit.id} - ${unit.officer} (${unit.rank})`;
                     resultElement.addEventListener('click', () => {
-                        unitSelect.value = unit.id;
+                        // Update the unit select
+                        unitSelect.querySelector('.custom-select-header span').textContent = `Unit ${unit.id}`;
                         unitSearch.value = '';
                         searchResults.style.display = 'none';
                     });
@@ -2350,19 +2560,14 @@
             }
         }
 
-        // Handle unit select
-        function handleUnitSelect() {
-            const selectedUnitId = unitSelect.value;
-            if (selectedUnitId) {
-                unitSearch.value = selectedUnitId;
-            }
-        }
-
         // Assign unit to call
         function assignUnitToCall() {
-            const unitId = unitSelect.value;
-            if (!unitId || !state.activeCall) return;
-
+            const unitIdText = unitSelect.querySelector('.custom-select-header span').textContent;
+            if (!unitIdText || unitIdText === 'Select a unit to assign' || !state.activeCall) return;
+            
+            // Extract unit ID from text
+            const unitId = unitIdText.replace('Unit ', '');
+            
             if (!state.activeCall.assignedUnits.includes(unitId)) {
                 state.activeCall.assignedUnits.push(unitId);
                 renderAssignedUnits();
@@ -2375,7 +2580,7 @@
                 renderNarrativeLog();
 
                 // Clear selection
-                unitSelect.value = '';
+                unitSelect.querySelector('.custom-select-header span').textContent = 'Select a unit to assign';
                 unitSearch.value = '';
             }
         }
@@ -2394,6 +2599,9 @@
                 case 'guide':
                     guideModal.style.display = 'flex';
                     break;
+                case 'doc':
+                    docModal.style.display = 'flex';
+                    break;
             }
         }
 
@@ -2404,9 +2612,8 @@
 
             state.activeSignals.push(signalNum);
             
-            // Show signal alert
-            signalAlert.textContent = `Signal ${signalNum} Active`;
-            signalAlert.style.display = 'block';
+            // Add to active alerts
+            addAlert('signal', `Signal ${signalNum}`, `Emergency signal ${signalNum} activated`);
             
             // Add narrative entry if there's an active call
             if (state.activeCall) {
@@ -2419,12 +2626,43 @@
 
             signalModal.style.display = 'none';
             signalNumber.value = '';
+        }
 
-            // Auto-hide after 10 seconds
+        // Add alert to active alerts section
+        function addAlert(type, title, description) {
+            const alertId = 'alert-' + Date.now();
+            const alertItem = document.createElement('div');
+            alertItem.className = 'alert-item';
+            alertItem.id = alertId;
+            
+            const iconClass = type === 'priority' ? 'priority' : 'signal';
+            
+            alertItem.innerHTML = `
+                <div class="alert-icon ${iconClass}">
+                    <i class="fas fa-${type === 'priority' ? 'exclamation-triangle' : 'broadcast-tower'}"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">${title}</div>
+                    <div class="alert-description">${description}</div>
+                </div>
+                <div class="alert-time">${new Date().toLocaleTimeString()}</div>
+                <button class="alert-close" data-id="${alertId}">&times;</button>
+            `;
+            
+            activeAlerts.appendChild(alertItem);
+            
+            // Add close functionality
+            alertItem.querySelector('.alert-close').addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                document.getElementById(id).remove();
+            });
+            
+            // Auto-remove after 30 seconds
             setTimeout(() => {
-                signalAlert.style.display = 'none';
-                state.activeSignals = state.activeSignals.filter(s => s !== signalNum);
-            }, 10000);
+                if (document.getElementById(alertId)) {
+                    document.getElementById(alertId).remove();
+                }
+            }, 30000);
         }
 
         // Handle supervisor request
@@ -2506,25 +2744,17 @@
             // Extract code from situation type (e.g., "10-80 Pursuit" -> "10-80")
             const code = situationType.split(' ')[0];
             
-            // Show priority alert
-            priorityAlert.textContent = `${situationType} ACTIVE`;
-            priorityAlert.style.display = 'block';
+            // Add to active alerts
+            addAlert('priority', `${situationType} ACTIVE`, `Priority situation activated - ${situationType}`);
             
-            // Add animation for slashing effect
-            let slashVisible = true;
-            const slashInterval = setInterval(() => {
-                priorityAlert.textContent = slashVisible ? 
-                    `${situationType} ACTIVE` : 
-                    `${situationType} ACTIVE`;
-                slashVisible = !slashVisible;
-            }, 1000);
-            
-            // Auto-hide after 10 seconds
-            setTimeout(() => {
-                clearInterval(slashInterval);
-                priorityAlert.style.display = 'none';
-                state.activePrioritySituation = null;
-            }, 10000);
+            // Add narrative entry if there's an active call
+            if (state.activeCall) {
+                state.activeCall.narrative.push({
+                    timestamp: new Date(),
+                    text: `Priority situation activated: ${situationType}`
+                });
+                renderNarrativeLog();
+            }
         }
 
         // Handle user login
@@ -2533,7 +2763,12 @@
             
             const discordId = document.getElementById('discord-id').value;
             const robloxUsername = document.getElementById('roblox-username').value;
-            const position = document.getElementById('position').value;
+            const position = state.selectedPosition || 'Dispatcher';
+            
+            if (!position) {
+                alert('Please select your position');
+                return;
+            }
             
             state.user = {
                 discordId,
@@ -2561,6 +2796,9 @@
         function startCAD() {
             loginScreen.style.display = 'none';
             cadApp.style.display = 'grid';
+            
+            // Show tools button
+            toolsBtn.style.display = 'flex';
             
             // Update user info
             displayUserId.textContent = state.user.discordId;
@@ -2632,13 +2870,17 @@
 
         // Update unit select dropdown
         function updateUnitSelect() {
-            unitSelect.innerHTML = '<option value="">Select a unit to assign</option>';
+            unitOptions.innerHTML = '';
             state.units.forEach(unit => {
-                const option = document.createElement('option');
-                option.value = unit.id;
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
                 option.textContent = `Unit ${unit.id} - ${unit.officer} (${unit.status})`;
-                unitSelect.appendChild(option);
+                option.setAttribute('data-value', unit.id);
+                unitOptions.appendChild(option);
             });
+            
+            // Re-setup the custom select
+            setupCustomSelect(unitSelect);
         }
 
         // Handle new call creation
@@ -2685,7 +2927,7 @@
             e.preventDefault();
             
             const unitId = document.getElementById('unit-id').value;
-            const rank = document.getElementById('unit-rank').value;
+            const rank = state.selectedRank;
             const location = document.getElementById('unit-location').value;
             const status = state.selectedUnitStatus;
             const officerName = document.getElementById('officer-name').value;
@@ -2696,6 +2938,11 @@
             const unitNum = parseInt(unitId);
             if (unitNum < 101 || unitNum > 499) {
                 alert('Unit ID must be between 101 and 499');
+                return;
+            }
+            
+            if (!rank) {
+                alert('Please select a rank');
                 return;
             }
             
