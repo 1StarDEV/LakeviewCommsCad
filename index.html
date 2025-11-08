@@ -225,6 +225,57 @@
             box-shadow: 0 4px 12px rgba(162, 22, 28, 0.4);
         }
 
+        /* Sign Out Modal */
+        .signout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .signout-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        .signout-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .signout-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .signout-message {
+            color: var(--gray);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .signout-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
         /* CAD App */
         .app-container {
             display: none;
@@ -310,42 +361,11 @@
             cursor: pointer;
             font-size: 0.8rem;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
         .sign-out-btn:hover {
             background: var(--primary);
             transform: translateY(-1px);
-        }
-
-        .sign-out-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-
-        .sign-out-btn:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
-            }
         }
 
         /* Priority Alert */
@@ -611,14 +631,17 @@
             border-radius: 8px;
             border: 1px solid var(--border);
             transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
+            cursor: grab;
         }
 
         .unit-item:hover {
             background: #252525;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .unit-item:active {
+            cursor: grabbing;
         }
 
         .unit-status {
@@ -679,42 +702,25 @@
             color: var(--gray);
         }
 
-        /* Right Click Menu */
-        .context-menu {
-            position: fixed;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 8px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: none;
-            animation: menuAppear 0.2s ease-out;
-        }
-
-        @keyframes menuAppear {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .context-menu-item {
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 0.85rem;
+        .unit-actions {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .context-menu-item:hover {
+        .unit-action-btn {
+            padding: 4px 8px;
+            background: var(--card-bg);
+            color: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .unit-action-btn:hover {
             background: var(--primary);
-        }
-
-        .context-menu-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 4px 0;
+            border-color: var(--primary);
         }
 
         /* Active Incident Panel */
@@ -892,6 +898,12 @@
             background: var(--accent);
             border-radius: 8px;
             border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .unit-tags.drag-over {
+            background: rgba(162, 22, 28, 0.1);
+            border: 2px dashed var(--primary);
         }
 
         .unit-tag {
@@ -1101,6 +1113,37 @@
             width: auto;
         }
 
+        /* Update Unit Modal */
+        .update-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .update-option {
+            padding: 12px;
+            background: var(--accent);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .update-option:hover {
+            background: rgba(162, 22, 28, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .update-option i {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
         /* Utility Classes */
         .text-sm {
             font-size: 0.8rem;
@@ -1159,12 +1202,6 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-dark);
-        }
-
-        /* Drag and Drop */
-        .drag-over {
-            background: rgba(162, 22, 28, 0.1) !important;
-            border: 2px dashed var(--primary) !important;
         }
 
         /* LKVC Branding */
@@ -1247,26 +1284,57 @@
         </div>
     </div>
 
+    <!-- Sign Out Modal -->
+    <div class="signout-modal" id="signout-modal">
+        <div class="signout-content">
+            <div class="signout-icon">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h2 class="signout-title">Confirm Sign Out</h2>
+            <p class="signout-message">Your session has been logged successfully! Thank you for your shift, please close this tab.</p>
+            <div class="signout-actions">
+                <button class="btn btn-secondary" id="cancel-signout">Cancel</button>
+                <button class="btn btn-danger" id="confirm-signout">Close Tab</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Priority Alert -->
     <div class="priority-alert" id="priority-alert"></div>
 
-    <!-- Context Menu -->
-    <div class="context-menu" id="context-menu">
-        <div class="context-menu-item" data-action="status-10-8">
-            <i class="fas fa-circle text-success"></i> Set Status: 10-8 Available
-        </div>
-        <div class="context-menu-item" data-action="status-10-6">
-            <i class="fas fa-circle text-warning"></i> Set Status: 10-6 Busy
-        </div>
-        <div class="context-menu-item" data-action="status-10-7">
-            <i class="fas fa-circle text-danger"></i> Set Status: 10-7 Out of Service
-        </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" data-action="update-location">
-            <i class="fas fa-map-marker-alt"></i> Update Location
-        </div>
-        <div class="context-menu-item" data-action="remove-unit">
-            <i class="fas fa-trash"></i> Remove Unit
+    <!-- Update Unit Modal -->
+    <div class="modal" id="update-unit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Update Unit <span id="update-unit-id"></span></div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="update-options">
+                <div class="update-option" data-action="status">
+                    <i class="fas fa-exchange-alt"></i>
+                    <div>
+                        <div class="text-sm">Change Status</div>
+                        <div class="text-xs">Update unit status (10-8, 10-6, 10-7)</div>
+                    </div>
+                </div>
+                <div class="update-option" data-action="location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <div class="text-sm">Update Location</div>
+                        <div class="text-xs">Change unit's current location</div>
+                    </div>
+                </div>
+                <div class="update-option" data-action="remove">
+                    <i class="fas fa-trash"></i>
+                    <div>
+                        <div class="text-sm">Remove Unit</div>
+                        <div class="text-xs">Permanently remove this unit</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-update">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -1283,7 +1351,7 @@
                     <div class="user-id" id="display-user-id">User#0000</div>
                     <div class="shift-time" id="shift-timer">Shift: 00:00:00</div>
                 </div>
-                <button class="sign-out-btn" id="sign-out-btn" tabindex="0">
+                <button class="sign-out-btn" id="sign-out-btn">
                     <i class="fas fa-sign-out-alt"></i> Sign Out
                 </button>
             </div>
@@ -1561,10 +1629,12 @@
         const confirmationModal = document.getElementById('confirmation-modal');
         const closeConfirmationBtn = document.getElementById('close-confirmation');
         const signOutBtn = document.getElementById('sign-out-btn');
+        const signoutModal = document.getElementById('signout-modal');
+        const cancelSignoutBtn = document.getElementById('cancel-signout');
+        const confirmSignoutBtn = document.getElementById('confirm-signout');
         const displayUserId = document.getElementById('display-user-id');
         const shiftTimer = document.getElementById('shift-timer');
         const priorityAlert = document.getElementById('priority-alert');
-        const contextMenu = document.getElementById('context-menu');
         const callList = document.getElementById('call-list');
         const unitList = document.getElementById('unit-list');
         const activeIncidentHeader = document.getElementById('active-incident-header');
@@ -1583,6 +1653,9 @@
         const addUnitModal = document.getElementById('add-unit-modal');
         const addUnitForm = document.getElementById('add-unit-form');
         const cancelUnitBtn = document.getElementById('cancel-unit');
+        const updateUnitModal = document.getElementById('update-unit-modal');
+        const updateUnitId = document.getElementById('update-unit-id');
+        const cancelUpdateBtn = document.getElementById('cancel-update');
         const closeButtons = document.querySelectorAll('.close-modal');
 
         // Initialize the application
@@ -1598,7 +1671,9 @@
             // Event Listeners
             loginForm.addEventListener('submit', handleLogin);
             closeConfirmationBtn.addEventListener('click', closeConfirmation);
-            signOutBtn.addEventListener('click', handleSignOut);
+            signOutBtn.addEventListener('click', () => signoutModal.style.display = 'flex');
+            cancelSignoutBtn.addEventListener('click', () => signoutModal.style.display = 'none');
+            confirmSignoutBtn.addEventListener('click', handleSignOut);
             newCallBtn.addEventListener('click', () => newCallModal.style.display = 'flex');
             cancelCallBtn.addEventListener('click', () => newCallModal.style.display = 'none');
             newCallForm.addEventListener('submit', handleNewCall);
@@ -1611,6 +1686,7 @@
             narrativeInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') addNarrativeEntry();
             });
+            cancelUpdateBtn.addEventListener('click', () => updateUnitModal.style.display = 'none');
 
             // Status option selection
             document.querySelectorAll('.status-option').forEach(option => {
@@ -1688,32 +1764,12 @@
                 });
             });
 
-            // Context menu actions
-            document.querySelectorAll('.context-menu-item').forEach(item => {
-                item.addEventListener('click', function() {
+            // Update option selection
+            document.querySelectorAll('.update-option').forEach(option => {
+                option.addEventListener('click', function() {
                     const action = this.getAttribute('data-action');
-                    handleContextMenuAction(action);
-                    contextMenu.style.display = 'none';
+                    handleUpdateAction(action);
                 });
-            });
-
-            // Close context menu when clicking elsewhere
-            document.addEventListener('click', () => {
-                contextMenu.style.display = 'none';
-            });
-
-            // Right-click context menu for units
-            document.addEventListener('contextmenu', (e) => {
-                const unitElement = e.target.closest('.unit-item');
-                if (unitElement) {
-                    e.preventDefault();
-                    state.selectedUnit = unitElement.dataset.id;
-                    
-                    // Position context menu
-                    contextMenu.style.display = 'block';
-                    contextMenu.style.left = `${e.pageX}px`;
-                    contextMenu.style.top = `${e.pageY}px`;
-                }
             });
 
             closeButtons.forEach(button => {
@@ -1721,6 +1777,7 @@
                     newCallModal.style.display = 'none';
                     addUnitModal.style.display = 'none';
                     priorityModal.style.display = 'none';
+                    updateUnitModal.style.display = 'none';
                 });
             });
 
@@ -1729,6 +1786,8 @@
                 if (event.target === newCallModal) newCallModal.style.display = 'none';
                 if (event.target === addUnitModal) addUnitModal.style.display = 'none';
                 if (event.target === priorityModal) priorityModal.style.display = 'none';
+                if (event.target === updateUnitModal) updateUnitModal.style.display = 'none';
+                if (event.target === signoutModal) signoutModal.style.display = 'none';
             });
 
             // Setup drag and drop
@@ -1771,40 +1830,38 @@
             });
         }
 
-        // Handle context menu actions
-        function handleContextMenuAction(action) {
+        // Handle update actions
+        function handleUpdateAction(action) {
             if (!state.selectedUnit) return;
             
             const unit = state.units.find(u => u.id === state.selectedUnit);
             if (!unit) return;
             
             switch(action) {
-                case 'status-10-8':
-                    unit.status = '10-8';
-                    unit.statusTime = new Date();
+                case 'status':
+                    const newStatus = prompt('Enter new status (10-8, 10-6, 10-7):', unit.status);
+                    if (newStatus && ['10-8', '10-6', '10-7'].includes(newStatus)) {
+                        unit.status = newStatus;
+                        unit.statusTime = new Date();
+                        renderUnitList();
+                    }
                     break;
-                case 'status-10-6':
-                    unit.status = '10-6';
-                    unit.statusTime = new Date();
-                    break;
-                case 'status-10-7':
-                    unit.status = '10-7';
-                    unit.statusTime = new Date();
-                    break;
-                case 'update-location':
+                case 'location':
                     const newLocation = prompt('Enter new location:', unit.location);
                     if (newLocation) {
                         unit.location = newLocation;
+                        renderUnitList();
                     }
                     break;
-                case 'remove-unit':
+                case 'remove':
                     if (confirm(`Are you sure you want to remove Unit ${unit.id}?`)) {
                         state.units = state.units.filter(u => u.id !== state.selectedUnit);
+                        renderUnitList();
                     }
                     break;
             }
             
-            renderUnitList();
+            updateUnitModal.style.display = 'none';
             state.selectedUnit = null;
         }
 
@@ -1909,7 +1966,8 @@
             state.activePrioritySituation = null;
             state.selectedUnit = null;
             
-            // Show login screen
+            // Show sign out message
+            signoutModal.style.display = 'none';
             cadApp.style.display = 'none';
             loginScreen.style.display = 'flex';
             
@@ -2226,6 +2284,11 @@
                     <div class="unit-location">${unit.location}</div>
                     <div class="unit-status-time">Status: ${unit.status} (${diffMins}m ago) | Added: ${totalDiffMins}m ago</div>
                 </div>
+                <div class="unit-actions">
+                    <button class="unit-action-btn update-btn" data-id="${unit.id}">
+                        <i class="fas fa-edit"></i> Update
+                    </button>
+                </div>
             `;
             
             // Add drag events
@@ -2236,6 +2299,14 @@
             
             unitElement.addEventListener('dragend', () => {
                 unitElement.style.opacity = '1';
+            });
+            
+            // Add update button event
+            unitElement.querySelector('.update-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                state.selectedUnit = unit.id;
+                updateUnitId.textContent = unit.id;
+                updateUnitModal.style.display = 'flex';
             });
             
             return unitElement;
